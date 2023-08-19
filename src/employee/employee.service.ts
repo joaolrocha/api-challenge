@@ -25,7 +25,11 @@ export class EmployeeService {
   ß
   // Metodo que trás todos os employees
   async findAll(): Promise<Employee[]> {
-    return await this.employeeRepository.find();
+    return await this.employeeRepository.find({
+      order: {
+        name:'ASC'
+      }
+    });
   }
 
   async findEmployeeById(id: number): Promise<Employee> {
