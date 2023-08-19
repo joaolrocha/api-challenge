@@ -1,8 +1,8 @@
-import { Controller, Post, Body, Get, HttpException, HttpStatus, Param, NotFoundException } from '@nestjs/common';
-import { EmployeeService } from './employee.service';
+import { Body, Controller, Get, HttpException, HttpStatus, NotFoundException, Param, Patch, Post } from '@nestjs/common';
+import { WinstonLogger } from '../logger/logger.service'; // Importe o WinstonLogger
 import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { EmployeeService } from './employee.service';
 import { Employee } from './entity/employee.entity';
-import { WinstonLogger } from '../logger/logger.service';  // Importe o WinstonLogger
 
 @Controller('employee')
 export class EmployeeController {
@@ -38,13 +38,28 @@ export class EmployeeController {
 
   @Get(':id')
   async findById(@Param('id') id: number): Promise<Employee> {
-      const employee = await this.employeeService.findEmployeeById(id);
-      if (!employee) {
-          this.logger.error(`Employee with ID ${id} not found`);
-          throw new NotFoundException(`Employee with ID ${id} not found`);
-      }
-      this.logger.debug(`Found employee with ID ${id}: ${JSON.stringify(employee)}`);
-      return employee;
+    const employee = await this.employeeService.findEmployeeById(id);
+    if (!employee) {
+      this.logger.error(`Employee with ID ${id} not found`);
+      throw new NotFoundException(`Employee with ID ${id} not found`);
+    }
+    this.logger.debug(`Found employee with ID ${id}: ${JSON.stringify(employee)}`);
+    return employee;
+  }
+
+  @Patch(':id/status')
+  async updateStatus(
+    @Param('id') id: number,
+    @Body('status') status: string,
+  ): Promise<Employee> {
+    try {
+      const updatedEmployee = await this.employeeService.updateStatus(id, status);
+      this.logger.info(`Employee with ID: ${id} had their status updated to: ${status}`);
+      return updatedEmployee;
+    } catch (error) {
+      this.logger.error(`Failed to update status for Employee with ID: ${id}. Error: ${error.message}`);
+      throw new HttpException('Failed to update employee status', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
 

@@ -1,8 +1,8 @@
-import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Employee } from './entity/employee.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateEmployeeDto } from './dto/create-employee.dto';
+import { Employee } from './entity/employee.entity';
 
 @Injectable()
 export class EmployeeService {
@@ -10,7 +10,7 @@ export class EmployeeService {
   constructor(
     @InjectRepository(Employee)
     private readonly employeeRepository: Repository<Employee>,
-  ) {}
+  ) { }
 
   /**
    * Cria um novo registro de funcionário no banco de dados.
@@ -22,7 +22,7 @@ export class EmployeeService {
     const employee = this.employeeRepository.create(employeeDto);
     return await this.employeeRepository.save(employee);
   }
-ß
+  ß
   // Metodo que trás todos os employees
   async findAll(): Promise<Employee[]> {
     return await this.employeeRepository.find();
@@ -31,7 +31,13 @@ export class EmployeeService {
   async findEmployeeById(id: number): Promise<Employee> {
     return await this.employeeRepository.findOne({ where: { id: id } });
   }
-   
+
+  async updateStatus(id: number, status: string): Promise<Employee> {
+    const employee = await this.employeeRepository.findOne({ where: { id: id } });
+    if (!employee) {
+      throw new NotFoundException(`Employee with ID ${id} not found`)
+    }
+    employee.status = status
+    return await this.employeeRepository.save(employee)
+  }
 }
-
-
