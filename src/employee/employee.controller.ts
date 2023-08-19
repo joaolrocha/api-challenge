@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Get, HttpException, HttpStatus, Param, NotFoundException } from '@nestjs/common';
 import { EmployeeService } from './employee.service';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Employee } from './entity/employee.entity';
@@ -34,6 +34,17 @@ export class EmployeeController {
       this.logger.error(`Error fetching employees: ${error.message}`);
       throw new HttpException('Error fetching employees', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  @Get(':id')
+  async findById(@Param('id') id: number): Promise<Employee> {
+      const employee = await this.employeeService.findEmployeeById(id);
+      if (!employee) {
+          this.logger.error(`Employee with ID ${id} not found`);
+          throw new NotFoundException(`Employee with ID ${id} not found`);
+      }
+      this.logger.debug(`Found employee with ID ${id}: ${JSON.stringify(employee)}`);
+      return employee;
   }
 }
 
