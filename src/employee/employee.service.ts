@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { Employee } from './entity/employee.entity';
+import { utcToZonedTime, format } from 'date-fns-tz';
 
 @Injectable()
 export class EmployeeService {
@@ -42,6 +43,13 @@ export class EmployeeService {
       throw new NotFoundException(`Employee with ID ${id} not found`)
     }
     employee.status = status
+
+    if (status === 'Validado') {
+      const brasiliaTz = 'America/Sao_Paulo';
+      const zonedDate = utcToZonedTime(new Date(), brasiliaTz);
+      employee.validationDate = zonedDate;
+    }
+
     return await this.employeeRepository.save(employee)
   }
 }
