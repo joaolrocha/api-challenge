@@ -16,17 +16,13 @@ A API foi construída com o NestJS, um framework progressivo para a construção
 
 ### 🛠 **Instruções de Instalação**
 
-1. Clone o repositório:
-   git clone link-do-repositório-da-api
+1. Clone o repositório
 
-2. Mude para o diretório do projeto:
-  cd nome-do-diretorio-da-api
-
-3. Instale as dependências:
+2. Instale as dependências:
   npm install
 
-4. Execute a API:
-  npm start
+3. Execute a API:
+  npm run start
 
 A API estará rodando em [http://localhost:3000/](http://localhost:3000/).
 
